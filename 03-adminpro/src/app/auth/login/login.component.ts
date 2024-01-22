@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UsuarioService } from 'src/app/services/usuario.service';
@@ -24,7 +24,8 @@ export class LoginComponent implements AfterViewInit {
 
   constructor( private router: Router,
                private fb: FormBuilder,
-               private usuarioService: UsuarioService ) { }
+               private usuarioService: UsuarioService,
+               private ngZone: NgZone ) { }
 
   ngAfterViewInit(): void {
     this.googleInit();
@@ -46,9 +47,10 @@ export class LoginComponent implements AfterViewInit {
     //console.log("Encoded JWT ID token: " + response.credential);
     this.usuarioService.loginGoogle( response.credential ).
       subscribe( resp => {
-        console.log(resp);
-        // Navegar al Dashboard
-        this.router.navigateByUrl('/');
+        this.ngZone.run(()=>{
+          localStorage.setItem('email', resp.email );
+          this.router.navigateByUrl('/');
+        })
       } );
   }
 

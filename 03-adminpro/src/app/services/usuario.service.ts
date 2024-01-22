@@ -1,12 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { tap, map, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { environment } from '../../environments/environment';
 
 import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form.interface';
-import { Observable, of } from 'rxjs';
+
+declare const google: any;
 
 const base_url = environment.baseUrl;
 
@@ -15,7 +18,10 @@ const base_url = environment.baseUrl;
 })
 export class UsuarioService {
 
-  constructor( private http: HttpClient ) { }
+  constructor( private http: HttpClient,
+               private router: Router ) {
+
+}
 
   validarToken(): Observable<boolean>{
     const token = localStorage.getItem('token') || '';
@@ -59,6 +65,10 @@ export class UsuarioService {
                     localStorage.setItem('token', resp.token );
                   } )
                 );
+  }
+
+  logout() {
+        this.router.navigateByUrl('/login');
   }
 
 
