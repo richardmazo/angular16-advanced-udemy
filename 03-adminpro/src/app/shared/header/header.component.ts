@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, NgZone } from '@angular/core';
+import { Usuario } from 'src/app/models/usuario.model';
 import { UsuarioService } from 'src/app/services/usuario.service';
 
 declare const google: any;
@@ -11,8 +12,11 @@ declare const google: any;
 })
 export class HeaderComponent implements AfterViewInit {
 
-  constructor( private usuarioService: UsuarioService,
-               private ngZone: NgZone ) { }
+  public usuario?: Usuario;
+
+  constructor( private usuarioService: UsuarioService, private ngZone: NgZone ) {
+    this.usuario = usuarioService.usuario;
+  }
 
   ngAfterViewInit(): void {
     this.googleInit();
