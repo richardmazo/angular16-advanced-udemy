@@ -69,9 +69,8 @@ export class UsuariosComponent implements OnInit, OnDestroy {
     }
 
     this.busquedasService.buscar( 'usuarios', termino )
-      .subscribe( resultados => {
-        console.log(resultados);
-        this.usuarios = resultados
+      .subscribe( resp => {
+        this.usuarios = resp as Usuario[];
       } );
     
     return;
@@ -104,6 +103,7 @@ export class UsuariosComponent implements OnInit, OnDestroy {
         }
       });
       return;
+      
     }
 
     cambiarRole( usuario: Usuario ){

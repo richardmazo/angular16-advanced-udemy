@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import {Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
-import { HospitalService } from '../../../services/hospital.service';
 import { Hospital } from '../../../models/hospital.model';
+
+import { BusquedasService } from '../../../services/busquedas.service';
+import { HospitalService } from '../../../services/hospital.service';
 import { ModalImagenService } from '../../../services/modal-imagen.service';
 
 
@@ -14,19 +16,39 @@ import { ModalImagenService } from '../../../services/modal-imagen.service';
   styles: [
   ]
 })
-export class HospitalesComponent implements OnInit{
+export class HospitalesComponent implements OnInit, OnDestroy {
 
   public hospitales: Hospital[] = [];
   public cargando: boolean = true;
   private imgSubs!: Subscription;
 
-  constructor( private hospitalService: HospitalService, private modalImagenService: ModalImagenService ) {}
+  constructor( private hospitalService: HospitalService, 
+               private modalImagenService: ModalImagenService,
+               private busquedasService: BusquedasService ) {}
+
+  ngOnDestroy(): void {
+    this.imgSubs.unsubscribe();
+  }
 
   ngOnInit(): void {
     this.cargarHospitales();
     this.imgSubs = this.modalImagenService.nuevaImagen
         .pipe(delay(100))
         .subscribe( img => this.cargarHospitales() )
+  }
+
+  buscar( termino: string ){
+
+    if ( termino.length === 0 ){
+      return this.cargarHospitales();
+    }
+
+    this.busquedasService.buscar( 'hospitales', termino )
+      .subscribe( resp => {
+        this.hospitales = resp;
+      } );
+    
+    return;
   }
 
   cargarHospitales(){
