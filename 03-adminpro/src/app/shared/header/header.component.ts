@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, NgZone } from '@angular/core';
+import { Router } from '@angular/router';
 import { Usuario } from 'src/app/models/usuario.model';
 import { UsuarioService } from 'src/app/services/usuario.service';
 
@@ -14,7 +15,9 @@ export class HeaderComponent implements AfterViewInit {
 
   public usuario?: Usuario;
 
-  constructor( private usuarioService: UsuarioService, private ngZone: NgZone ) {
+  constructor( private usuarioService: UsuarioService, 
+               private ngZone: NgZone,
+               private router: Router ) {
     this.usuario = usuarioService.usuario;
   }
 
@@ -39,6 +42,15 @@ export class HeaderComponent implements AfterViewInit {
       localStorage.removeItem('token');
       localStorage.removeItem('email');
     })
+  }
+
+  buscar( termino: string ){
+
+    if( termino.length === 0 ){
+      return;
+    }
+
+    this.router.navigateByUrl(`/dashboard/buscar/${ termino }`);
   }
 
 }
